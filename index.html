@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Items app</title>
+  </head>
+  <body>
+    <div class="h1">Items App</div>
+    <input id="item" placeholder="Item Name" />
+    <button id="add_item">Add</button>
+
+    <div class="data">No items found!</div>
+
+    <script>
+      const dataEl = document.querySelector(".data");
+      const itemInput = document.querySelector("#item");
+      const addItemBtn = document.querySelector("#add_item");
+
+      addItemBtn.addEventListener("click", function () {
+        let item = itemInput.value;
+        fetch("http://127.0.0.1:5000/items", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: item }),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data));
+      });
+
+      fetch("http://127.0.0.1:5000/items")
+        .then((res) => res.json())
+        .then((data) => handler(data));
+
+      function handler(data) {
+        if (data.length == 0) {
+          dataEl.innerHTML = "No items found!";
+          return;
+        } else {
+          dataEl.innerHTML = "";
+        }
+        data.forEach((element) => {
+          let p = document.createElement("p");
+          p.innerHTML = element.name;
+          dataEl.appendChild(p);
+        });
+      }
+    </script>
+  </body>
+</html>
